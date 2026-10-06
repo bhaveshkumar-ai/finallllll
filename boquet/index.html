@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Bouquet Surprise</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to bottom, #ffc0cb, #ffe6f0); /* soft pink gradient */
+      overflow-x: hidden;
+      text-align: center;
+    }
+
+    .section {
+      display: none;
+      padding: 50px;
+      min-height: 100vh;
+    }
+
+    .active {
+      display: block;
+      animation: fadeIn 1.5s ease;
+    }
+
+    button {
+      padding: 12px 24px;
+      margin-top: 20px;
+      border: none;
+      border-radius: 8px;
+      background: #ff4da6;
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #e60073;
+    }
+
+    /* Petals */
+    .petal {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: pink;
+      border-radius: 50%;
+      animation: fall 10s linear infinite;
+    }
+
+    @keyframes fall {
+      0% { transform: translateY(-10vh) rotate(0deg); }
+      100% { transform: translateY(110vh) rotate(360deg); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* Bouquet gallery */
+    .bouquet-gallery {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 30px;
+    }
+
+    .bouquet {
+      width: 220px;
+      border-radius: 12px;
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    .bouquet:hover {
+      transform: scale(1.1);
+    }
+
+    /* Glow effects tuned to vibe */
+    .redwhite { box-shadow: 0 0 25px crimson; }
+    .lilies   { box-shadow: 0 0 25px pink; }
+    .choco    { box-shadow: 0 0 25px chocolate; }
+    .cream    { box-shadow: 0 0 25px peachpuff; }
+    .fresh    { box-shadow: 0 0 25px lightblue; }
+    .modern   { box-shadow: 0 0 25px hotpink; }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Step 1 -->
+  <div id="step1" class="section active">
+    <h1>🌸 Petal Prelude 🌸</h1>
+    <p>Every flower begins with a feeling…</p>
+    <button onclick="nextStep(2)">Begin the Surprise</button>
+  </div>
+
+  <!-- Step 2 -->
+  <div id="step2" class="section">
+    <h1>💖 Blooming Flowers 💖</h1>
+    <p>Click to bloom a flower of love!</p>
+    <button onclick="nextStep(3)">Click to Bloom</button>
+  </div>
+
+  <!-- Step 3 -->
+  <div id="step3" class="section">
+    <h1>🌺 Garden of Affection 🌺</h1>
+    <p>Explore the garden of memories.</p>
+    <button onclick="nextStep(4)">Explore the Garden</button>
+  </div>
+
+  <!-- Step 4 -->
+  <div id="step4" class="section">
+    <h1>💐 Final Bouquet 💐</h1>
+    <p>You are my most beautiful moment.</p>
+
+    <div class="bouquet-gallery">
+      <img src="assets/bouquet1.jpeg" class="bouquet redwhite">
+      <img src="assets/bouquet2.jpeg" class="bouquet lilies">
+      <img src="assets/bouquet3.jpeg" class="bouquet choco">
+      <img src="assets/bouquet4.jpeg" class="bouquet cream">
+      <img src="assets/bouquet5.jpeg" class="bouquet fresh">
+      <img src="assets/bouquet6.jpeg" class="bouquet modern">
+    </div>
+
+    <button onclick="celebrate()">Reveal the Bouquet</button>
+    <canvas id="confettiCanvas"></canvas>
+  </div>
+
+  <script>
+    function nextStep(step) {
+      document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+      document.getElementById('step' + step).classList.add('active');
+    }
+
+    // Petals
+    for (let i = 0; i < 15; i++) {
+      let petal = document.createElement('div');
+      petal.className = 'petal';
+      petal.style.left = Math.random() * 100 + 'vw';
+      petal.style.animationDuration = (5 + Math.random() * 5) + 's';
+      document.body.appendChild(petal);
+    }
+
+    // Confetti
+    function celebrate() {
+      const canvas = document.getElementById('confettiCanvas');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      const ctx = canvas.getContext('2d');
+
+      const confetti = [];
+      for (let i = 0; i < 150; i++) {
+        confetti.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height - canvas.height,
+          r: Math.random() * 6 + 2,
+          d: Math.random() * 100 + 50,
+          color: "hsl(" + Math.random() * 360 + ",100%,50%)"
+        });
+      }
+
+      function drawConfetti() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        confetti.forEach(c => {
+          ctx.beginPath();
+          ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2, false);
+          ctx.fillStyle = c.color;
+          ctx.fill();
+        });
+        updateConfetti();
+      }
+
+      function updateConfetti() {
+        confetti.forEach(c => {
+          c.y += c.d / 100;
+          if (c.y > canvas.height) {
+            c.y = -10;
+            c.x = Math.random() * canvas.width;
+          }
+        });
+      }
+
+      setInterval(drawConfetti, 20);
+    }
+  </script>
+</body>
+</html>
